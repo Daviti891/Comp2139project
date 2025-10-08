@@ -1,14 +1,29 @@
+@model List<Comp2139Project.Models.Project>
 
-@model List<Comp2139Project.Controllers.Project>
+<h2>Projects</h2>
 
-<h2>Projects List</h2>
+<p>
+    <a href="/Projects/Create">Create New Project</a>
+</p>
 
-<ul>
-    @foreach (var project in Model)
+<table class="table">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Owner</th>
+        <th>Start Date</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var p in Model)
     {
-        <li>
-            <strong>@project.Name</strong>: @project.Description
-        </li>
+        <tr>
+            <td>@p.Title</td>
+            <td>@p.Owner</td>
+            <td>@p.StartDate.ToShortDateString()</td>
+            <td><a href="/Projects/Details/@p.Id">Details</a></td>
+        </tr>
     }
-</ul>
-
+    </tbody>
+</table>

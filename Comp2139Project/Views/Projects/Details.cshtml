@@ -1,0 +1,10 @@
+@model Comp2139Project.Models.Project
+
+<h2>Project Details</h2>
+
+<p><strong>Title:</strong> @Model.Title</p>
+<p><strong>Description:</strong> @Model.Description</p>
+<p><strong>Owner:</strong> @Model.Owner</p>
+<p><strong>Start Date:</strong> @Model.StartDate.ToShortDateString()</p>
+
+<a href="/Projects">Back to List</a>
