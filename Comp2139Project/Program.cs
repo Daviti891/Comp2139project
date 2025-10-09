@@ -1,4 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using Comp2139Project.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Database Context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

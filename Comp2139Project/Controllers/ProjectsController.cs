@@ -1,38 +1,63 @@
 using Microsoft.AspNetCore.Mvc;
-using Comp2139Project.Models;   
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Comp2139Project.Data;
+using Comp2139Project.Models;
 
 namespace Comp2139Project.Controllers
 {
     public class ProjectsController : Controller
     {
-        private static List<Project> projects = new()
-        {
-            new Project { Id = 1, Title = "Artificial Intelligence Research", Description = "Exploring AI", Owner = "John", StartDate = DateTime.Now },
-            new Project { Id = 2, Title = "Digital Shop", Description = "Floral Online Store", Owner = "Bobby", StartDate = DateTime.Now },
-            new Project { Id = 3, Title = "Personal Health Monitor", Description = "A mobile application designed to monitor fitness progress and health objectives", Owner = "Jane", StartDate = DateTime.Now }
-        };
+        private readonly ApplicationDbContext _context;
 
-
-        public IActionResult Index()
+        // Constructor - dependency injection
+        public ProjectsController(ApplicationDbContext context)
         {
-            return View(projects);   
+            _context = context;
         }
 
-        public IActionResult Create() => View();
+        // GET: Projects
+        public async Task<IActionResult> Index()
+        {
+            var projects = await _context.Projects.ToListAsync();
+            return View(projects);
+        }
 
+        // GET: Projects/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        // GET: Projects/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: Projects/Create
         [HttpPost]
-        public IActionResult Create(Project project)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,Title,Owner,StartDate")] Project project)
         {
-            project.Id = projects.Count + 1;
-            projects.Add(project);
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult Details(int id)
-        {
-            var project = projects.Find(p => p.Id == id);
-            if (project == null) return NotFound();
+            if (ModelState.IsValid)
+            {
+                _context.Add(project);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
             return View(project);
         }
     }
